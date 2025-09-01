@@ -82,13 +82,13 @@ echo "[FS42] Launching channel changer..."
 : > "$LOG_DIR/channel_changer.log"
 python3 fs42/change_channel.py > "$LOG_DIR/channel_changer.log" 2>&1 &
 
-echo "[FS42] Launching OSD..."
-: > "$LOG_DIR/osd.log"
-python3 fs42/osd/main.py > "$LOG_DIR/osd.log" 2>&1 &
+echo "[FS42] Launching overlay..."
+: > "$LOG_DIR/fsx_overlay.log"
+python3 fs42/osd/fsx_overlay.py > "$LOG_DIR/fsx_overlay.log" 2>&1 &
 
-sleep 2
-wmctrl -r "FieldStationOSD" -b add,above || echo "[OSD] Failed to raise window"
-wmctrl -a "FieldStationOSD" || echo "[OSD] Failed to focus window"
+echo "[FS42] Launching OSD menu..."
+: > "$LOG_DIR/fsx_menu.log"
+python3 fs42/osd/fsx_menu.py > "$LOG_DIR/fsx_menu.log" 2>&1 &
 
 ########################################
 # 4. Wait Indefinitely

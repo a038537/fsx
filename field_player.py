@@ -6,6 +6,9 @@ import datetime
 import json
 import signal
 import logging
+import subprocess
+import sys
+from pathlib import Path
 
 from fs42.liquid_manager import LiquidManager
 from fs42.station_manager import StationManager
@@ -318,6 +321,10 @@ if __name__ == "__main__":
         api_commands_queue = None
         api_proc = None
 
+    osd_dir = Path(__file__).resolve().parent / "fs42" / "osd"
+    overlay_proc = subprocess.Popen([sys.executable, osd_dir / "fsx_overlay.py"])
+    menu_proc = subprocess.Popen([sys.executable, osd_dir / "fsx_menu.py"])
+
     try:
         main_loop(trans_fn, shutdown_queue=shutdown_queue, api_proc=api_proc)
     finally:
@@ -325,3 +332,7 @@ if __name__ == "__main__":
             shutdown_queue.put("shutdown")
         if api_proc is not None:
             api_proc.join(timeout=5)
+        overlay_proc.terminate()
+        menu_proc.terminate()
+        overlay_proc.wait()
+        menu_proc.wait()
